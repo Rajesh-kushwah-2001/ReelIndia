@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Settings - ReelIndia (Dark/Light Theme)</title>
+<style>
+  body {
+    background: #121212;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  h1 {
+    color: #ff0050;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 600;
+  }
+  .section {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px 25px;
+    margin-bottom: 25px;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  .section h2 {
+    color: #ff0050;
+    font-weight: 600;
+    font-size: 20px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 8px;
+    transition: color 0.3s, border-color 0.3s;
+  }
+  .option {
+    padding: 12px 0;
+    border-bottom: 1px solid #333;
+    font-size: 16px;
+    cursor: pointer;
+    color: #ccc;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .option:last-child {
+    border-bottom: none;
+  }
+  .option:hover {
+    background-color: #333;
+    color: white;
+  }
+  /* Modal Styles */
+  #termsModal, #privacyModal, #contactSupportModal, #communityGuidelinesModal, #helpCenterModal, #reportProblemModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.75);
+  }
+  #termsContent, #privacyContent, #contactContent, #communityContent, #helpCenterContent, #reportProblemContent {
+    background-color: #222;
+    margin: 10% auto;
+    padding: 20px 30px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    color: white;
+    max-height: 70vh;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  #closeTerms, #privacyCloseBtn, #contactCloseBtn, #communityCloseBtn, #helpCenterCloseBtn, #reportProblemCloseBtn {
+    float: right;
+    color: #ff0050;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 20px;
+  }
+  /* Language dropdown style */
+  select#languageSelect {
+    margin-left: 10px;
+    padding: 5px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    background-color: #333;
+    color: white;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  /* Switch styles */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+  }
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  input:checked + .slider {
+    background-color: #ff0050;
+  }
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+  /* Light theme overrides */
+  body.light-theme {
+    background: #f9f9f9;
+    color: #222;
+  }
+  body.light-theme .section {
+    background: #fff;
+    border-color: #ccc;
+  }
+  body.light-theme .section h2 {
+    color: #ff0050;
+    border-color: #ccc;
+  }
+  body.light-theme .option {
+    border-color: #ddd;
+    color: #333;
+  }
+  body.light-theme .option:hover {
+    background-color: #eee;
+    color: #000;
+  }
+  body.light-theme select#languageSelect {
+    background-color: #fff;
+    color: #000;
+  }
+</style>
+</head>
+<body>
+<h1>Settings</h1>
+
+<div class="section">
+  <h2>Account Settings</h2>
+  <div class="option" onclick="alert('Change Password clicked')">Change Password (पासवर्ड बदलना)</div>
+  <div class="option" onclick="alert('Edit Account Details clicked')">Edit Account Details (नाम/ईमेल अपडेट)</div>
+  <div class="option" onclick="alert('Delete Account clicked')">Delete Account (अकाउंट डिलीट का विकल्प)</div>
+  <div class="option" onclick="alert('Manage Linked Accounts clicked')">Manage Linked Accounts (सोशल लिंक्ड अकाउंट्स)</div>
+</div>
+
+<div class="section">
+  <h2>Privacy & Security</h2>
+  <div class="option" onclick="alert('Two-Factor Authentication clicked')">Two-Factor Authentication (2FA)</div>
+  <div class="option" onclick="alert('Blocked Users List clicked')">Blocked Users List (ब्लॉक किए हुए यूज़र्स)</div>
+  <div class="option" onclick="alert('Activity Status Control clicked')">Activity Status Control (Online स्टेटस हाइड/शो)</div>
+  <div class="option" onclick="alert('Content Visibility clicked')">Content Visibility (प्रोफाइल/रिल्स निजी या सार्वजनिक रखें)</div>
+</div>
+
+<div class="section">
+  <h2>Notifications</h2>
+  <div class="option" style="cursor: default;">
+    Push Notification Settings (नोटिफिकेशन ऑन/ऑफ):
+    <label class="switch">
+      <input type="checkbox" id="pushNotificationToggle" checked />
+      <span class="slider round"></span>
+    </label>
+  </div>
+  <div class="option" style="cursor: default;">
+    Email Notification Settings (ईमेल नोटिफिकेशन विकल्प):
+    <label class="switch">
+      <input type="checkbox" id="emailNotificationToggle" checked />
+      <span class="slider round"></span>
+    </label>
+  </div>
+</div>
+
+<div class="section">
+  <h2>App Preferences</h2>
+  <div class="option" style="cursor: default; display: flex; align-items: center; gap: 10px;">
+    Language Option (भाषा विकल्प):
+    <select id="languageSelect" aria-label="Language Selection">
+      <option value="hi">हिन्दी</option>
+      <option value="en">English</option>
+      <option value="ta">தமிழ் (Tamil)</option>
+      <option value="te">తెలుగు (Telugu)</option>
+      <option value="bn">বাংলা (Bengali)</option>
+      <option value="gu">ગુજરાતી (Gujarati)</option>
+      <option value="mr">मराठी (Marathi)</option>
+      <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+    </select>
+  </div>
+  <div class="option" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+    Dark/Light Mode Switch:
+    <label class="switch">
+      <input type="checkbox" id="themeToggle" />
+      <span class="slider round"></span>
+    </label>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Support & Help</h2>
+  <div class="option" id="contactSupportBtn">Contact Support (सपोर्ट से संपर्क करें)</div>
+  <div class="option" id="helpCenterBtn">Help Center / FAQs (सामान्य सवाल-जवाब)</div>
+  <div class="option" id="reportProblemBtn">Report a Problem (समस्या रिपोर्ट करें)</div>
+</div>
+
+<div class="section">
+  <h2>Legal</h2>
+  <div class="option" id="termsOfServiceBtn">Terms of Service (नियम एवं शर्तें)</div>
+  <div class="option" id="privacyPolicyBtn">Privacy Policy (प्राइवेसी नीति)</div>
+  <div class="option" id="communityGuidelinesBtn">Community Guidelines (कम्युनिटी गाइडलाइंस)</div>
+</div>
+
+<!-- Terms of Service Modal -->
+<div id="termsModal">
+  <div id="termsContent">
+    <span id="closeTerms">&times;</span>
+    <h2>📜 ReelIndia – Terms of Service</h2>
+    <p><strong>प्रभावी तिथि:</strong> [अपनी तिथि डालें]</p>
+    <p>स्वागत है ReelIndia में!<br />
+    ये नियम और शर्तें (“Terms”) आपके और ReelIndia के बीच समझौता हैं। ऐप/वेबसाइट का उपयोग करके आप इन नियमों से सहमत होते हैं।</p>
+    <h3>1. पात्रता</h3>
+    <p>आपकी उम्र कम से कम 13 वर्ष होनी चाहिए।<br />
+    18 साल से कम उम्र के उपयोगकर्ताओं को माता-पिता/guardian की अनुमति लेनी होगी।</p>
+    <h3>2. अकाउंट</h3>
+    <p>सही और अपडेटेड जानकारी देना ज़रूरी है।<br />
+    पासवर्ड और अकाउंट की सुरक्षा आपकी ज़िम्मेदारी है।</p>
+    <h3>3. यूज़र कंटेंट</h3>
+    <p>आपके द्वारा अपलोड किया गया वीडियो और सामग्री आपकी ही रहेगी।<br />
+    लेकिन आप ReelIndia को उसे दिखाने, शेयर करने और होस्ट करने का अधिकार देते हैं।<br />
+    आप अवैध, हिंसक, अश्लील, hate speech या दूसरों के अधिकार का उल्लंघन करने वाला कंटेंट पोस्ट नहीं कर सकते।</p>
+    <h3>4. निषिद्ध कार्य</h3>
+    <p>नकली अकाउंट या धोखाधड़ी।<br />
+    हानिकारक या अश्लील सामग्री।<br />
+    किसी की intellectual property चोरी करना।</p>
+    <h3>5. समाप्ति (Termination)</h3>
+    <p>अगर कोई यूज़र नियम तोड़ता है, तो उसका अकाउंट बिना सूचना बंद किया जा सकता है।</p>
+    <h3>6. ज़िम्मेदारी की सीमा</h3>
+    <p>ReelIndia किसी भी तरह की हानि, डेटा लॉस या misuse के लिए जिम्मेदार नहीं होगा।</p>
+    <h3>7. बदलाव</h3>
+    <p>हम किसी भी समय Terms बदल सकते हैं और बदलाव वेबसाइट पर डाले जाएंगे।</p>
+  </div>
+</div>
+
+<!-- Privacy Policy Modal -->
+<div id="privacyModal">
+  <div id="privacyContent">
+    <span id="privacyCloseBtn">&times;</span>
+    <h2>🔒 ReelIndia – Privacy Policy</h2>
+    <p><strong>प्रभावी तिथि:</strong> [अपनी तिथि डालें]</p>
+    <p>हम आपके डेटा और प्राइवेसी को गंभीरता से लेते हैं।</p>
+    <h3>1. हम कौन सा डेटा इकट्ठा करते हैं</h3>
+    <p>Personal Data: नाम, ईमेल, मोबाइल नंबर।<br/>
+       Usage Data: डिवाइस जानकारी, IP address, browser details।<br/>
+       Content Data: आपके वीडियो, लाइक्स, कमेंट्स।</p>
+    <h3>2. डेटा का उपयोग</h3>
+    <p>प्लेटफ़ॉर्म को सही ढंग से चलाने और सुधारने के लिए।<br/>
+       यूज़र को बेहतर अनुभव और personalization देने के लिए।<br/>
+       सुरक्षा और fraud रोकने के लिए।</p>
+    <h3>3. डेटा शेयरिंग</h3>
+    <p>आपका डेटा हम किसी को बेचते नहीं।<br/>
+       Analytics और विज्ञापन के लिए कुछ basic जानकारी third-party tools को दी जा सकती है।</p>
+    <h3>4. Cookies और Tracking</h3>
+    <p>हम cookies का उपयोग करते हैं ताकि आपको personalized experience मिल सके।</p>
+    <h3>5. डेटा सुरक्षा</h3>
+    <p>हम encryption और सुरक्षित servers का उपयोग करते हैं।</p>
+    <h3>6. यूज़र अधिकार</h3>
+    <p>आप अपना अकाउंट कभी भी delete कर सकते हैं।<br/>
+       आप अपने data को हटाने का अनुरोध कर सकते हैं।</p>
+    <h3>7. बच्चों की प्राइवेसी</h3>
+    <p>हम 13 साल से कम उम्र के बच्चों का data जानबूझकर collect नहीं करते।</p>
+    <h3>8. बदलाव</h3>
+    <p>हम इस Policy को समय-समय पर अपडेट कर सकते हैं और बदलाव वेबसाइट पर पोस्ट किए जाएंगे।</p>
+  </div>
+</div>
+
+<!-- Contact Support Modal -->
+<div id="contactSupportModal">
+  <div id="contactContent">
+    <span id="contactCloseBtn">&times;</span>
+    <h2>🎥 ReelIndia – Content Support Policy</h2>
+    <p><strong>प्रभावी तिथि:</strong> [अपनी तिथि डालें]</p>
+    <p>ReelIndia पर आपका स्वागत है!<br />
+    हम चाहते हैं कि हर user को एक सुरक्षित और creative माहौल मिले।<br />
+    इसलिए हम Content Support से जुड़ी कुछ बातें स्पष्ट करना चाहते हैं।</p>
+    <h3>✅ Upload Guidelines</h3>
+    <ul>
+      <li>आप original और creative वीडियो अपलोड कर सकते हैं।</li>
+      <li>अपलोड से पहले यह सुनिश्चित करें कि:</li>
+      <ul>
+        <li>Content किसी और का copyright उल्लंघन नहीं करता।</li>
+        <li>वीडियो साफ़, स्पष्ट और community friendly हो।</li>
+        <li>आपने किसी और की personal जानकारी या video बिना उनकी अनुमति के use नहीं किया है।</li>
+      </ul>
+    </ul>
+    <h3>❌ Prohibited Content</h3>
+    <ul>
+      <li>आप ऐसा content upload नहीं कर सकते जिसमें शामिल हो:</li>
+      <ul>
+        <li>Hate speech, हिंसा या खतरनाक activities।</li>
+        <li>नग्नता या sexual content।</li>
+        <li>Drugs, हथियार या किसी illegal activity का प्रचार।</li>
+        <li>झूठी जानकारी या गलत अफवाहें।</li>
+        <li>स्पैम, misleading या clickbait videos।</li>
+      </ul>
+    </ul>
+    <h3>📌 Content Review</h3>
+    <p>
+      अगर कोई video हमारी Community Guidelines या Terms of Service तोड़ेगा तो उसे review करके हटाया जा सकता है।<br />
+      कुछ मामलों में video तुरंत block हो सकता है।<br />
+      बार-बार rule तोड़ने पर account suspend या permanently ban किया जा सकता है।
+    </p>
+    <h3>🚨 Reporting System</h3>
+    <p>
+      अगर आपको कोई video या user नियम तोड़ता हुआ दिखे, तो आप उसे Report कर सकते हैं।<br />
+      हमारी टीम उस रिपोर्ट को review करेगी और उचित कार्रवाई करेगी।
+    </p>
+    <h3>📢 Appeals (अपील प्रक्रिया)</h3>
+    <p>
+      अगर आपका video गलती से remove हो गया है, तो आप Appeal कर सकते हैं।<br />
+      Appeal review के बाद final decision लिया जाएगा।
+    </p>
+    <h3>🤝 Help & Support</h3>
+    <p>
+      अगर आपको किसी भी तरह की दिक्कत हो (login issue, video upload समस्या, report/appeal status), तो आप हमें contact कर सकते हैं:<br />
+      Email: <a href="mailto:support@reelindia.com" style="color:#ff0050;">support@reelindia.com</a><br />
+      Help Center: [URL डालें]<br />
+      In-App Support: “Help” section में form भरें।
+    </p>
+  </div>
+</div>
+
+<!-- Community Guidelines Modal -->
+<div id="communityGuidelinesModal">
+  <div id="communityContent">
+    <span id="communityCloseBtn">&times;</span>
+    <h2>🌐 ReelIndia – Community Guidelines</h2>
+    <p><strong>प्रभावी तिथि:</strong> [अपनी तिथि डालें]</p>
+    <p>हमारा लक्ष्य है कि ReelIndia एक सुरक्षित, सकारात्मक और रचनात्मक जगह बने जहाँ हर कोई अपने विचार, टैलेंट और कहानियाँ साझा कर सके।</p>
+    <p>इसलिए, सभी users को नीचे दिए गए Guidelines का पालन करना ज़रूरी है।</p>
+    <h3>✅ क्या Allowed है</h3>
+    <ul>
+      <li>Original और creative वीडियो बनाना और शेयर करना।</li>
+      <li>Respectful बातचीत और healthy discussion।</li>
+      <li>Entertainment, education, art, music और culture को promote करने वाले कंटेंट।</li>
+      <li>Diversity और अलग-अलग विचारों का सम्मान करना।</li>
+    </ul>
+    <h3>❌ क्या बिल्कुल Allow नहीं है</h3>
+    <ol>
+      <li><strong>हिंसा और खतरनाक कंटेंट</strong><br />
+      हिंसा, खून-खराबा, आतंकवाद, self-harm या खतरनाक activities को promote करने वाले वीडियो।</li>
+      <li><strong>Hate Speech और भेदभाव</strong><br />
+      किसी भी जाति, धर्म, भाषा, लिंग, राष्ट्रीयता या अन्य identity के खिलाफ नफ़रत फैलाना।<br />
+      गाली-गलौच या अपमानजनक भाषा।</li>
+      <li><strong>नग्नता और अश्लीलता</strong><br />
+      यौन सामग्री, नग्नता, अश्लील इशारे या sexual exploitation।</li>
+      <li><strong>अवैध गतिविधियाँ</strong><br />
+      Drugs, हथियारों, जुआ, hacking, चोरी या किसी भी तरह की गैर-कानूनी गतिविधि का प्रचार।</li>
+      <li><strong>गलत जानकारी (Misinformation)</strong><br />
+      झूठी खबरें, अफवाहें या medical/health से जुड़ी गलत जानकारी फैलाना।</li>
+      <li><strong>स्पैम और धोखाधड़ी</strong><br />
+      Duplicate या irrelevant कंटेंट डालना।<br />
+      Fake accounts बनाना।<br />
+      Users से पैसे या personal जानकारी ठगना।</li>
+      <li><strong>Copyright उल्लंघन</strong><br />
+      किसी और का गाना, वीडियो या content बिना अनुमति इस्तेमाल करना।</li>
+    </ol>
+    <h3>👥 User Responsibility</h3>
+    <ul>
+      <li>अपनी और दूसरों की सुरक्षा का ध्यान रखें।</li>
+      <li>दूसरों की privacy और dignity का सम्मान करें।</li>
+      <li>रिपोर्ट करें अगर आपको कोई नियम तोड़ता हुआ कंटेंट दिखे।</li>
+    </ul>
+    <h3>🚨 उल्लंघन पर कार्रवाई</h3>
+    <ul>
+      <li>उसका वीडियो हटाया जा सकता है।</li>
+      <li>उसका अकाउंट suspend या permanently ban किया जा सकता है।</li>
+      <li>गंभीर मामलों में कानूनी कार्रवाई भी हो सकती है।</li>
+    </ul>
+    <h3>✨ हमारा वादा</h3>
+    <p>हम चाहते हैं कि ReelIndia हर उम्र और हर वर्ग के लिए एक सुरक्षित और मनोरंजक प्लेटफ़ॉर्म बने। आपके सहयोग से हम इसे संभव बना सकते हैं।</p>
+  </div>
+</div>
+<!-- Help Center / FAQs Modal -->
+<div id="helpCenterModal" style="display:none; position: fixed; z-index: 1000; left:0; top:0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.75);">
+  <div id="helpCenterContent" style="background-color:#222; margin: 10% auto; padding: 20px 30px; border-radius: 8px; max-width: 600px; color: white; max-height: 70vh; overflow-y: auto; font-size:14px; line-height: 1.6;">
+    <span id="helpCenterCloseBtn" style="float: right; color:#ff0050; font-weight: bold; cursor: pointer; font-size: 20px;">&times;</span>
+    <h2>🛠 ReelIndia – Help Center / FAQs / Report a Problem</h2>
+    <p><strong>प्रभावी तिथि:</strong> [अपनी तिथि डालें]</p>
+    <h3>❓ Frequently Asked Questions (FAQs)</h3>
+
+    <h4>🔹 General</h4>
+    <p><strong>Q1.</strong> ReelIndia क्या है?<br/>
+      ReelIndia एक short video sharing प्लेटफ़ॉर्म है जहाँ आप creative videos देख और बना सकते हैं।
+    </p>
+    <p><strong>Q2.</strong> क्या ReelIndia free है?<br/>
+      हाँ, ReelIndia का उपयोग पूरी तरह free है।
+    </p>
+    <p><strong>Q3.</strong> मुझे कौन-कौन सी भाषा मिलेगी?<br/>
+      ReelIndia हिन्दी, English और कई regional भाषाओं में उपलब्ध है।
+    </p>
+
+    <h4>🔹 Account Related</h4>
+    <p><strong>Q4.</strong> मैं account कैसे बना सकता हूँ?<br/>
+      आप email, mobile number या social login (Google/Facebook) से account बना सकते हैं।
+    </p>
+    <p><strong>Q5.</strong> अगर मैंने password भूल गया तो क्या करूँ?<br/>
+      “Forgot Password” option पर क्लिक करके नया password set कर सकते हैं।
+    </p>
+    <p><strong>Q6.</strong> क्या मैं अपना account delete कर सकता हूँ?<br/>
+      हाँ, आप “Settings &gt; Delete Account” में जाकर account delete कर सकते हैं।
+    </p>
+
+    <h4>🔹 Content Related</h4>
+    <p><strong>Q7.</strong> क्या मैं कोई भी video upload कर सकता हूँ?<br/>
+      हाँ, लेकिन वह Community Guidelines का पालन करना चाहिए।
+    </p>
+    <p><strong>Q8.</strong> अगर मेरा video remove हो गया तो क्यों?<br/>
+      शायद वह नियमों का उल्लंघन कर रहा था। आप “Appeal” करके दोबारा review करवा सकते हैं।
+    </p>
+    <p><strong>Q9.</strong> क्या मैं दूसरों के गाने या वीडियो का इस्तेमाल कर सकता हूँ?<br/>
+      नहीं, जब तक आपके पास permission या license न हो।
+    </p>
+  </div>
+</div>
+<!-- Report a Problem Modal -->
+<div id="reportProblemModal" style="display:none; position: fixed; z-index: 1000; left:0; top:0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.75);">
+  <div style="background-color:#222; margin: 10% auto; padding: 20px 30px; border-radius: 8px; max-width: 600px; color: white; max-height: 70vh; overflow-y: auto; font-size:14px; line-height: 1.6;">
+    <span id="reportProblemCloseBtn" style="float: right; color:#ff0050; font-weight: bold; cursor: pointer; font-size: 20px;">&times;</span>
+    <h2>📝 Report a Problem</h2>
+    <p>अगर आपको कोई issue आता है (technical issue, abusive content, policy violation, bugs), तो आप हमें आसानी से report कर सकते हैं।</p>
+    <h3>कैसे रिपोर्ट करें?</h3>
+    <ol>
+      <li><strong>In-App Reporting:</strong><br/>
+        Video या User profile पर जाएँ → “Report” button दबाएँ।<br/>
+        Reason चुनें (जैसे spam, abuse, illegal content)।<br/>
+        Submit करें।
+      </li>
+      <li><strong>Help & Support Form:</strong><br/>
+        Settings &gt; Help Center &gt; Report a Problem<br/>
+        Issue detail लिखें और screenshot attach करें।
+      </li>
+      <li><strong>Email Support:</strong><br/>
+        हमें लिखें: <a href="mailto:support@reelindia.com" style="color:#ff0050;">support@reelindia.com</a><br/>
+        Subject में issue लिखें (जैसे “Login Problem” या “Video Not Uploading”)
+      </li>
+    </ol>
+  </div>
+</div>
+<script>
+  // Modal control logic
+  const termsBtn = document.getElementById('termsOfServiceBtn');
+  const privacyBtn = document.getElementById('privacyPolicyBtn');
+  const contactSupportBtn = document.getElementById('contactSupportBtn');
+  const communityBtn = document.getElementById('communityGuidelinesBtn');
+  const helpCenterBtn = document.getElementById('helpCenterBtn');
+  const reportProblemBtn = document.getElementById('reportProblemBtn');
+
+  const termsModal = document.getElementById('termsModal');
+  const privacyModal = document.getElementById('privacyModal');
+  const contactSupportModal = document.getElementById('contactSupportModal');
+  const communityModal = document.getElementById('communityGuidelinesModal');
+  const helpCenterModal = document.getElementById('helpCenterModal');
+  const reportProblemModal = document.getElementById('reportProblemModal');
+
+  const closeTerms = document.getElementById('closeTerms');
+  const closePrivacy = document.getElementById('privacyCloseBtn');
+  const closeContact = document.getElementById('contactCloseBtn');
+  const closeCommunity = document.getElementById('communityCloseBtn');
+  const closeHelpCenter = document.getElementById('helpCenterCloseBtn');
+  const closeReportProblem = document.getElementById('reportProblemCloseBtn');
+
+  termsBtn.onclick = () => { termsModal.style.display = 'block'; };
+  privacyBtn.onclick = () => { privacyModal.style.display = 'block'; };
+  contactSupportBtn.onclick = () => { contactSupportModal.style.display = 'block'; };
+  communityBtn.onclick = () => { communityModal.style.display = 'block'; };
+  helpCenterBtn.onclick = () => { helpCenterModal.style.display = 'block'; };
+  reportProblemBtn.onclick = () => { reportProblemModal.style.display = 'block'; };
+
+  closeTerms.onclick = () => { termsModal.style.display = 'none'; };
+  closePrivacy.onclick = () => { privacyModal.style.display = 'none'; };
+  closeContact.onclick = () => { contactSupportModal.style.display = 'none'; };
+  closeCommunity.onclick = () => { communityModal.style.display = 'none'; };
+  closeHelpCenter.onclick = () => { helpCenterModal.style.display = 'none'; };
+  closeReportProblem.onclick = () => { reportProblemModal.style.display = 'none'; };
+
+  window.onclick = (event) => {
+    if(event.target === termsModal) termsModal.style.display = 'none';
+    if(event.target === privacyModal) privacyModal.style.display = 'none';
+    if(event.target === contactSupportModal) contactSupportModal.style.display = 'none';
+    if(event.target === communityModal) communityModal.style.display = 'none';
+    if(event.target === helpCenterModal) helpCenterModal.style.display = 'none';
+    if(event.target === reportProblemModal) reportProblemModal.style.display = 'none';
+  };
+
+  const languageSelect = document.getElementById('languageSelect');
+  languageSelect.addEventListener('change', (event) => {
+    const selectedLang = event.target.value;
+    alert('Selected language: ' + selectedLang);
+  });
+
+  const themeToggle = document.getElementById('themeToggle');
+  if(localStorage.getItem('theme') === 'light'){
+    document.body.classList.add('light-theme');
+    themeToggle.checked = true;
+  }
+  themeToggle.addEventListener('change', () => {
+    if(themeToggle.checked){
+      document.body.classList.add('light-theme');
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.body.classList.remove('light-theme');
+      localStorage.setItem('theme', 'dark');
+    }
+  });
+
+  const pushToggle = document.getElementById('pushNotificationToggle');
+  pushToggle.addEventListener('change', () => {
+    alert('Push Notifications ' + (pushToggle.checked ? 'Enabled' : 'Disabled'));
+  });
+
+  const emailToggle = document.getElementById('emailNotificationToggle');
+  emailToggle.addEventListener('change', () => {
+    alert('Email Notifications ' + (emailToggle.checked ? 'Enabled' : 'Disabled'));
+  });
+</script>
+</body>
+</html>

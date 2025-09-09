@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ReelIndia - Feed</title>
+  <link rel="stylesheet" href="../styles/feed.css" />
+</head>
+<body>
+  <div id="feed" class="feed-container"></div>
+
+  <script src="../components/reel.js"></script>
+  <script src="../components/actions.js"></script>
+  <script>
+    fetch("/api/feed")
+      .then(res => res.json())
+      .then(videos => {
+        const feed = document.getElementById("feed");
+        videos.forEach(video => {
+          feed.appendChild(createReel(video));
+        });
+      });
+  </script>
+</body>
+</html>

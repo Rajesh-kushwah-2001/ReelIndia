@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edit Profile - ReelIndia</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+      max-width: 400px;
+      margin: 40px auto;
+    }
+    h2 {
+      text-align: center;
+      color: #ff0050;
+      margin-bottom: 30px;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: none;
+      background: #222;
+      color: white;
+    }
+    button {
+      margin-top: 30px;
+      background: #ff0050;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      border-radius: 6px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #e50045;
+    }
+    .message {
+      margin-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2>Edit Profile</h2>
+  <form id="editProfileForm">
+    <label for="nameInput">Name:</label>
+    <input type="text" id="nameInput" name="name" required />
+
+    <label for="profilePicInput">Profile Picture:</label>
+    <input type="file" id="profilePicInput" name="profilePic" accept="image/*" />
+
+    <button type="submit">Save Changes</button>
+  </form>
+  <div id="message" class="message"></div>
+
+  <script>
+    const AUTH_TOKEN = localStorage.getItem('token') || '';
+
+    if (!AUTH_TOKEN) {
+      alert('Please login first to edit profile.');
+      window.location.href = '/public/pages/login.html';
+    }
+
+    const form = document.getElementById('editProfileForm');
+    const messageDiv = document.getElementById('message');
+    const nameInput = document.getElementById('nameInput');
+
+    // Load current user data
+    async function loadUserData() {
+      try {
+        const res = await fetch('/api/user-data', {
+          headers: { Authorization: 'Bearer ' + AUTH_TOKEN }
+        });
+        const data = await res.json();
+        if (data) {
+          nameInput.value = data.name || '';
+        }
+      } catch (err) {
+        console.error('Failed to load user data:', err);
+      }
+    }
+
+    loadUserData();
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      messageDiv.textContent = '';
+      const formData = new FormData();
+      formData.append('name', nameInput.value.trim());
+
+      const fileInput = document.getElementById('profilePicInput');
+      if (fileInput.files.length > 0) {
+        formData.append('profilePic', fileInput.files[0]);
+      }
+
+      try {
+        const res = await fetch('/api/update-profile', {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + AUTH_TOKEN },
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          messageDiv.style.color = 'lightgreen';
+          messageDiv.textContent = 'Profile updated successfully!';
+        } else {
+          messageDiv.style.color = 'salmon';
+          messageDiv.textContent = data.message || 'Failed to update profile.';
+        }
+      } catch (err) {
+        messageDiv.style.color = 'salmon';
+        messageDiv.textContent = 'An error occurred. Please try again.';
+        console.error(err);
+      }
+    };
+  </script>
+</body>
+</html>

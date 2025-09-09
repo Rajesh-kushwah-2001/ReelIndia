@@ -1,0 +1,4 @@
+.upload-wrap { max-width: 720px; margin: 24px auto; padding: 16px; }
+.card { background:#111; border:1px solid #222; border-radius:12px; padding:16px; }
+.form-row { display:grid; gap:8px; margin:12px 0; }
+button.primary { background:#2a2a2a; color:#fff; border:0; padding:10px 14px; border-radius:10px; }

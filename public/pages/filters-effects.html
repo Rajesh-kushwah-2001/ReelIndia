@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Filters & Effects - ReelIndia</title>
+  <style>
+    body {
+      margin: 0; background: #000; color: #fff;
+      font-family: Arial, sans-serif; text-align: center;
+      padding: 20px;
+    }
+    h2 { color: #ff0050; margin-bottom: 15px; }
+    video {
+      width: 90%; max-height: 400px;
+      background: #111; border-radius: 10px;
+      margin-bottom: 15px;
+      filter: none;
+    }
+    .controls {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 10px; margin-top: 15px;
+    }
+    button {
+      padding: 8px 15px;
+      border: none; border-radius: 5px;
+      background: #ff0050; color: #fff;
+      cursor: pointer; font-size: 14px;
+    }
+    button:hover { background: #e60045; }
+    input[type="file"] { display: none; }
+    .upload-label {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #333; color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+    #applied {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #bbb;
+    }
+  </style>
+</head>
+<body>
+  <h2>Filters & Effects Playground</h2>
+
+  <!-- Upload Video -->
+  <label for="videoInput" class="upload-label">📂 Choose Video</label>
+  <input type="file" id="videoInput" accept="video/*">
+
+  <!-- Video Preview -->
+  <video id="preview" controls></video>
+
+  <!-- Filters -->
+  <h3>Filters 🎨</h3>
+  <div class="controls">
+    <button onclick="addFilter('grayscale(1)')">Grayscale</button>
+    <button onclick="addFilter('sepia(1)')">Sepia</button>
+    <button onclick="addFilter('invert(1)')">Invert</button>
+    <button onclick="addFilter('hue-rotate(90deg)')">Hue Rotate</button>
+    <button onclick="addFilter('saturate(3)')">Saturate</button>
+  </div>
+
+  <!-- Effects -->
+  <h3>Effects ✨</h3>
+  <div class="controls">
+    <button onclick="addFilter('blur(3px)')">Blur</button>
+    <button onclick="addFilter('brightness(1.5)')">Brightness</button>
+    <button onclick="addFilter('contrast(2)')">High Contrast</button>
+    <button onclick="addFilter('drop-shadow(2px 4px 6px red)')">Shadow</button>
+  </div>
+
+  <!-- Reset -->
+  <div class="controls">
+    <button onclick="clearFilters()">❌ Clear Filters</button>
+  </div>
+
+  <p id="applied">Applied: None</p>
+
+  <script>
+    const preview = document.getElementById("preview");
+    const videoInput = document.getElementById("videoInput");
+    const appliedText = document.getElementById("applied");
+
+    let appliedFilters = [];
+
+    // 📂 Load video from gallery
+    videoInput.onchange = e => {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        preview.src = url;
+        preview.style.display = "block";
+        preview.play();
+      }
+    };
+
+    // 🎨 Add filter (combine)
+    function addFilter(filter) {
+      if (!appliedFilters.includes(filter)) {
+        appliedFilters.push(filter);
+        updateFilters();
+      }
+    }
+
+    // ❌ Clear filters
+    function clearFilters() {
+      appliedFilters = [];
+      updateFilters();
+    }
+
+    // 🔄 Update filter string
+    function updateFilters() {
+      if (appliedFilters.length === 0) {
+        preview.style.filter = "none";
+        appliedText.textContent = "Applied: None";
+      } else {
+        preview.style.filter = appliedFilters.join(" ");
+        appliedText.textContent = "Applied: " + appliedFilters.join(", ");
+      }
+    }
+  </script>
+</body>
+</html>

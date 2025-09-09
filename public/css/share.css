@@ -1,0 +1,6 @@
+.share-panel { position:fixed; right:16px; bottom:16px; width:240px; background:#151515; border:1px solid #2a2a2a; border-radius:16px; box-shadow:0 8px 30px rgba(0,0,0,.5); padding:12px; display:none; z-index:10; }
+.share-panel.show { display:block; }
+.share-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:8px; border-bottom:1px solid #2a2a2a; margin-bottom:8px; }
+.share-actions { display:grid; gap:8px; }
+.share-actions a, .share-actions button { width:100%; text-align:center; padding:8px 10px; border-radius:10px; border:0; background:#222; color:#fff; }
+.share-actions a:hover, .share-actions button:hover { background:#2d2d2d; }

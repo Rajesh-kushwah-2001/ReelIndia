@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Reel - ReelIndia</title>
+  <style>
+    body {
+      margin: 0; background: #000; color: #fff;
+      font-family: Arial, sans-serif; text-align: center;
+      overflow: hidden;
+    }
+    #preview {
+      width: 100%; height: 80vh; object-fit: cover;
+      background: #111;
+      filter: none;
+    }
+    /* Top bar */
+    .top-bar {
+      position: absolute; top: 10px; left: 0; width: 100%;
+      display: flex; justify-content: center; gap: 25px;
+      font-size: 20px;
+    }
+    .top-bar span, .side-bar span { cursor: pointer; }
+    /* Side bar */
+    .side-bar {
+      position: absolute; top: 100px; right: 15px;
+      display: flex; flex-direction: column; gap: 20px;
+      font-size: 20px;
+    }
+    /* Bottom controls */
+    .bottom-controls {
+      position: absolute; bottom: 100px; width: 100%;
+      display: flex; justify-content: center; align-items: center; gap: 30px;
+    }
+    .record-btn, .gallery-btn {
+      width: 70px; height: 70px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 22px;
+    }
+    .record-btn {
+      background: #ff0050; box-shadow: 0 0 20px #ff0050; color: #fff;
+    }
+    .gallery-btn {
+      background: #333; color: #ff0050;
+    }
+    /* Tabs */
+    .tabs {
+      position: absolute; bottom: 50px; width: 100%;
+      display: flex; justify-content: center; gap: 40px;
+      font-size: 16px; color: #aaa;
+    }
+    .tabs span.active { color: #ff0050; font-weight: bold; }
+    /* Title + Upload */
+    #title, #uploadBtn {
+      display: none; margin: 10px auto; padding: 10px;
+      border: none; border-radius: 5px; font-size: 16px; width: 80%;
+    }
+    #uploadBtn {
+      background: #ff0050; color: #fff; border-radius: 25px; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Video -->
+  <video id="preview" autoplay muted></video>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <span id="muteBtn">🔇</span>
+    <span id="speedBtn">1x</span>
+    <span id="timerBtn">⏱</span>
+  </div>
+
+  <!-- Side icons -->
+  <div class="side-bar">
+    <span id="musicBtn">🎵</span>
+    <input type="file" id="musicInput" accept="audio/*" hidden>
+    <span id="effectBtn">✨</span>
+    <span id="filterBtn">🎨</span>
+    <span id="flipBtn">🔄</span>
+  </div>
+
+  <!-- Bottom controls -->
+  <div class="bottom-controls">
+    <div id="galleryBtn" class="gallery-btn">📂</div>
+    <div id="recordBtn" class="record-btn">⏺</div>
+    <input type="file" id="galleryInput" accept="video/*" hidden>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <span>STORY</span>
+    <span class="active">REEL</span>
+    <span>LIVE</span>
+  </div>
+
+  <!-- Title + Upload -->
+  <input type="text" id="title" placeholder="Enter reel title">
+  <button id="uploadBtn">Upload Reel</button>
+
+  <script>
+    const preview = document.getElementById("preview");
+    const recordBtn = document.getElementById("recordBtn");
+    const galleryBtn = document.getElementById("galleryBtn");
+    const galleryInput = document.getElementById("galleryInput");
+    const uploadBtn = document.getElementById("uploadBtn");
+    const titleInput = document.getElementById("title");
+
+    let mediaRecorder, chunks = [], recordedBlob, recording = false;
+    let stream, facingMode = "user"; // flip control
+    let muted = false, playbackRate = 1;
+    let music = null;
+
+    // 🎥 Start Camera
+    async function startCamera() {
+      if (stream) stream.getTracks().forEach(t => t.stop());
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode }, audio: true });
+      preview.srcObject = stream;
+      mediaRecorder = new MediaRecorder(stream);
+
+      mediaRecorder.ondataavailable = e => chunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        recordedBlob = new Blob(chunks, { type: "video/mp4" });
+        showPreview(URL.createObjectURL(recordedBlob));
+      };
+    }
+
+    // Show preview after record / select
+    function showPreview(url) {
+      preview.srcObject = null;
+      preview.src = url;
+      preview.controls = true;
+      preview.playbackRate = playbackRate;
+      preview.play();
+      titleInput.style.display = "block";
+      uploadBtn.style.display = "block";
+      if (music) music.play();
+    }
+
+    // ⏺ Record Button
+    recordBtn.onclick = () => {
+      if (!mediaRecorder) return;
+      if (!recording) {
+        chunks = [];
+        mediaRecorder.start();
+        recordBtn.style.background = "red";
+        recording = true;
+        if (music) music.play();
+      } else {
+        mediaRecorder.stop();
+        recordBtn.style.background = "#ff0050";
+        recording = false;
+        if (music) music.pause();
+      }
+    };
+
+    // 📂 Gallery Upload
+    galleryBtn.onclick = () => galleryInput.click();
+    galleryInput.onchange = e => {
+      const file = e.target.files[0];
+      if (file) {
+        recordedBlob = file;
+        showPreview(URL.createObjectURL(file));
+      }
+    };
+
+    // 🚀 Upload Reel
+    uploadBtn.onclick = async () => {
+      if (!recordedBlob) return alert("Select or record a video!");
+      const formData = new FormData();
+      formData.append("title", titleInput.value || "Untitled");
+      formData.append("video", recordedBlob);
+
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/upload-reel", {
+        method: "POST",
+        headers: { "Authorization": "Bearer " + token },
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("Reel uploaded!");
+        window.location.href = "/public/pages/index.html";
+      } else alert("Upload failed: " + data.message);
+    };
+
+    // 🔇 Mute/Unmute
+    document.getElementById("muteBtn").onclick = () => {
+      if (!stream) return;
+      muted = !muted;
+      stream.getAudioTracks().forEach(t => t.enabled = !muted);
+    };
+
+    // 1x Speed control
+    document.getElementById("speedBtn").onclick = (e) => {
+      if (playbackRate === 1) playbackRate = 0.5;
+      else if (playbackRate === 0.5) playbackRate = 2;
+      else playbackRate = 1;
+      e.target.textContent = playbackRate + "x";
+      preview.playbackRate = playbackRate;
+    };
+
+    // Timer
+    document.getElementById("timerBtn").onclick = () => {
+      const duration = prompt("Enter timer (15 or 60 sec):", "15");
+      if (!mediaRecorder || recording) return;
+      chunks = [];
+      mediaRecorder.start();
+      recording = true;
+      setTimeout(() => {
+        if (recording) {
+          mediaRecorder.stop();
+          recording = false;
+        }
+      }, parseInt(duration) * 1000);
+    };
+
+    // Flip Camera
+    document.getElementById("flipBtn").onclick = () => {
+      facingMode = (facingMode === "user") ? "environment" : "user";
+      startCamera();
+    };
+
+    // Music
+    const musicBtn = document.getElementById("musicBtn");
+    const musicInput = document.getElementById("musicInput");
+    musicBtn.onclick = () => musicInput.click();
+    musicInput.onchange = e => {
+      const file = e.target.files[0];
+      if (file) {
+        music = new Audio(URL.createObjectURL(file));
+        music.loop = true;
+      }
+    };
+
+    // Effects ✨
+    const effects = ["none", "blur(3px)", "brightness(1.5)", "contrast(2)", "sepia(1)"];
+    let effectIndex = 0;
+    document.getElementById("effectBtn").onclick = () => {
+      effectIndex = (effectIndex + 1) % effects.length;
+      preview.style.filter = effects[effectIndex];
+    };
+
+    // Filters 🎨
+    const filters = ["none", "grayscale(1)", "invert(1)", "hue-rotate(90deg)", "saturate(3)"];
+    let filterIndex = 0;
+    document.getElementById("filterBtn").onclick = () => {
+      filterIndex = (filterIndex + 1) % filters.length;
+      preview.style.filter = filters[filterIndex];
+    };
+
+    // Start camera on load
+    startCamera();
+  </script>
+</body>
+</html>

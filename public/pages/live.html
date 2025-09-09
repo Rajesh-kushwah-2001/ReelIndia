@@ -1,0 +1,19 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ReelIndia — Live</title>
+<link rel="stylesheet" href="../css/base.css"/>
+</head><body>
+<header class="topbar">
+  <div class="brand">ReelIndia</div>
+  <nav>
+    <a href="/public/pages/index.html">Reels</a>
+    <a href="/public/pages/live.html" class="active">Live</a>
+  </nav>
+</header>
+<main style="padding:16px;">
+  <p>WebRTC demo (signaling TODO). Click start to preview your cam.</p>
+  <video id="local" autoplay playsinline muted style="width:48%;background:#000;"></video>
+  <div><button id="btnStart">Start camera</button></div>
+</main>
+<script type="module" src="../js/live.js"></script>
+</body></html>

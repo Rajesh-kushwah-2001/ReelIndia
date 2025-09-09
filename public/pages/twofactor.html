@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Two-Factor Authentication (2FA) Setup - ReelIndia</title>
+<style>
+  body {
+    background: #121212;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+  }
+  h1 {
+    color: #ff0050;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  #qrCodeContainer {
+    text-align: center;
+    margin: 20px 0;
+  }
+  input[type="text"] {
+    display: block;
+    width: 180px;
+    font-size: 16px;
+    padding: 8px;
+    margin: 0 auto 12px auto;
+    border-radius: 4px;
+    border: none;
+  }
+  button {
+    background-color: #ff0050;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    display: block;
+    margin: 0 auto;
+  }
+  button:hover {
+    background-color: #cc0040;
+  }
+  #statusMessage {
+    margin-top: 15px;
+    text-align: center;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+<h1>Two-Factor Authentication (2FA) Setup</h1>
+<p>स्कैन करें अपना Google Authenticator ऐप और नीचे 6 अंकों का कोड दर्ज करें।</p>
+<div id="qrCodeContainer">Loading QR Code ...</div>
+<input type="text" id="twoFATokenInput" placeholder="6-digit code" maxlength="6" />
+<button id="verifyButton">Verify & Enable 2FA</button>
+<p id="statusMessage"></p>
+
+<script>
+  const qrCodeContainer = document.getElementById('qrCodeContainer');
+  const twoFATokenInput = document.getElementById('twoFATokenInput');
+  const verifyButton = document.getElementById('verifyButton');
+  const statusMessage = document.getElementById('statusMessage');
+
+  // Fetch QR Code on page load
+  window.onload = () => {
+    fetch('/api/2fa/setup', {
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        qrCodeContainer.innerHTML = `<img src="${data.qrCodeUrl}" alt="QR Code for 2FA Setup" />`;
+      } else {
+        qrCodeContainer.textContent = 'QR कोड लोड करने में समस्या हुई।';
+      }
+    })
+    .catch(() => {
+      qrCodeContainer.textContent = 'QR कोड लोड करने में समस्या हुई।';
+    });
+  };
+
+  verifyButton.onclick = () => {
+    const token = twoFATokenInput.value.trim();
+    if (token.length !== 6 || isNaN(token)) {
+      statusMessage.style.color = 'red';
+      statusMessage.textContent = 'कृपया 6 अंकों का वैध कोड दर्ज करें।';
+      return;
+    }
+    fetch('/api/2fa/verify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+      },
+      body: JSON.stringify({ token })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        statusMessage.style.color = 'green';
+        statusMessage.textContent = 'Two-Factor Authentication सफलतापूर्वक सक्रिय हो गया है।';
+        twoFATokenInput.value = '';
+      } else {
+        statusMessage.style.color = 'red';
+        statusMessage.textContent = data.message || 'सत्यापन विफल रहा।';
+      }
+    })
+    .catch(() => {
+      statusMessage.style.color = 'red';
+      statusMessage.textContent = 'कुछ त्रुटि हुई। कृपया पुनः प्रयास करें।';
+    });
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+.reels-container { height:100%; width:100%; overflow-y:auto; scroll-snap-type:y mandatory; }
+.reel { position:relative; height:calc(100vh - 56px); width:100%; scroll-snap-align:start; display:flex; justify-content:center; align-items:center; background:#000; }
+.reel video { width:100%; height:100%; object-fit:cover; background:#000; }
+.reel-info { position:absolute; left:16px; bottom:64px; text-shadow:0 1px 2px rgba(0,0,0,.6); }
+.reel-info .user { font-weight:700; margin-bottom:4px; }
+.reel-actions { position:absolute; right:16px; bottom:96px; display:flex; flex-direction:column; gap:16px; font-size:18px; text-align:center; }
+.reel-actions button { background:rgba(255,255,255,.18); border:0; padding:8px 10px; border-radius:12px; color:#fff; }
+.reel-actions button:hover { background:rgba(255,255,255,.28); }

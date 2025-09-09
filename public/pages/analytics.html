@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Analytics - ReelIndia</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+  body {
+    margin: 0; 
+    background: #181818; 
+    color: #fff; 
+    font-family: 'Roboto', Arial, sans-serif; 
+    text-align: center; 
+    padding: 30px 15px;
+  }
+  h2 {
+    color: #FF0000;
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-size: 2.4rem;
+    letter-spacing: 1.5px;
+  }
+  .card {
+    background: #202020;
+    margin: 15px auto;
+    padding: 25px 30px;
+    border-radius: 12px;
+    max-width: 450px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  }
+  .username {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+  }
+  .stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+    gap: 20px;
+  }
+  .stat {
+    flex: 1;
+    background: #282828;
+    border-radius: 10px;
+    padding: 20px 10px;
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+  }
+  .stat i {
+    font-size: 28px;
+    color: #FF0000;
+    margin-bottom: 8px;
+  }
+  .stat .number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .stat .label {
+    font-size: 1rem;
+    color: #bbb;
+  }
+  #monetization-criteria {
+    background: #202020;
+    margin: 20px auto 0;
+    padding: 18px 25px;
+    border-radius: 30px;
+    max-width: 450px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.15rem;
+    box-shadow: 0 0 12px rgba(255,0,0,0.8);
+  }
+  #monetization-badge {
+    padding: 10px 25px;
+    border-radius: 30px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+  .green-bg {
+    background-color: #4CAF50;
+    box-shadow: 0 0 15px #4CAF50;
+  }
+  .red-bg {
+    background-color: #ff0000;
+    box-shadow: 0 0 15px #ff0000;
+  }
+  #followers-count,
+  #views-count {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #ddd;
+  }
+  #followers-count {
+    margin-bottom: 5px;
+  }
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #181818;
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    border-top: 1px solid #333;
+  }
+  .bottom-nav i {
+    font-size: 28px;
+    cursor: pointer;
+    color: #fff;
+    transition: color 0.3s ease;
+  }
+  .bottom-nav i:hover {
+    color: #FF0000;
+  }
+  .upload-btn {
+    background: #FF0000;
+    padding: 12px 20px;
+    border-radius: 50%;
+    color: white;
+    font-size: 28px;
+    position: relative;
+    top: -10px;
+    box-shadow: 0 4px 12px rgba(255,0,0,0.7);
+    transition: background 0.3s ease;
+  }
+  .upload-btn:hover {
+    background: #cc0000;
+  }
+</style>
+</head>
+<body>
+  <h2>My Analytics</h2>
+  <div id="analytics-box" class="card">
+    <div class="username" id="username">@username</div>
+    <div class="stats">
+      <div class="stat">
+        <i class="fa-solid fa-eye"></i>
+        <div class="number" id="views">0</div>
+        <div class="label">Views</div>
+      </div>
+      <div class="stat">
+        <i class="fa-solid fa-heart"></i>
+        <div class="number" id="likes">0</div>
+        <div class="label">Likes</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="monetization-criteria" class="card">
+    <div id="monetization-badge" class="red-bg">
+      Monetization eligibility requires at least <strong>1200 followers</strong> or <strong>10 million views</strong>.
+    </div>
+    <div id="followers-count">Followers: 0</div>
+    <div id="views-count">Views: 0</div>
+  </div>
+
+  <div class="bottom-nav">
+    <i class="fa-solid fa-house" onclick="goTo('/public/pages/index.html')" title="Home"></i>
+    <i class="fa-solid fa-chart-line" onclick="goTo('/public/pages/analytics.html')" title="Analytics"></i>
+    <div class="upload-btn" onclick="goTo('/public/pages/upload.html')" title="Upload">
+      <i class="fa-solid fa-plus"></i>
+    </div>
+    <i class="fa-solid fa-inbox" onclick="alert('Inbox coming soon!')" title="Inbox"></i>
+    <i class="fa-solid fa-user" onclick="goTo('/public/pages/profile.html?user=self')" title="Profile"></i>
+  </div>
+
+<script>
+  function goTo(page) {
+    window.location.href = page;
+  }
+  async function loadAnalytics() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login again!");
+      window.location.href = "/public/pages/login.html";
+      return;
+    }
+    try {
+      const res = await fetch("/api/user-data", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.status === 401) {
+        alert("Session expired. Please login again!");
+        localStorage.clear();
+        window.location.href = "/public/pages/login.html";
+        return;
+      }
+      const user = await res.json();
+      if (!user) {
+        document.body.innerHTML = "<h2>User not found</h2>";
+        return;
+      }
+      document.getElementById("username").innerText = "@" + user.name;
+      const followersCount = user.followers?.length || 0;
+      const viewsCount = user.analytics?.views || 0;
+      const likesCount = user.analytics?.likes || 0;
+
+      document.getElementById("views").innerText = viewsCount;
+      document.getElementById("likes").innerText = likesCount;
+
+      const monetizeBadge = document.getElementById("monetization-badge");
+      const followersCountDiv = document.getElementById("followers-count");
+      const viewsCountDiv = document.getElementById("views-count");
+
+      followersCountDiv.textContent = `Followers: ${followersCount}`;
+      viewsCountDiv.textContent = `Views: ${viewsCount}`;
+
+      if (followersCount >= 1200 || viewsCount >= 10000000) {
+        monetizeBadge.innerHTML = "&#127881; Congratulations! You are eligible for monetization.";
+        monetizeBadge.classList.remove("red-bg");
+        monetizeBadge.classList.add("green-bg");
+      } else {
+        monetizeBadge.innerHTML =
+          "Monetization eligibility requires at least <strong>1200 followers</strong> or <strong>10 million views</strong>.";
+        monetizeBadge.classList.remove("green-bg");
+        monetizeBadge.classList.add("red-bg");
+      }
+    } catch (err) {
+      console.error("Analytics load error:", err);
+      document.body.innerHTML = "<h2>Error loading analytics</h2>";
+    }
+  }
+  loadAnalytics();
+</script>
+</body>
+</html>

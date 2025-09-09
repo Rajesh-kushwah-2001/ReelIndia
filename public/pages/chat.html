@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Real-Time Chat - ReelIndia</title>
+  <style>
+    /* Same styles as before for layout and chat UI */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #111;
+      color: white;
+      height: 100vh;
+      display: flex;
+    }
+    .chat-container {
+      display: flex;
+      width: 100%;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 300px;
+      background: #1a1a1a;
+      border-right: 1px solid #333;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-header {
+      padding: 20px;
+      background: #222;
+      border-bottom: 1px solid #333;
+    }
+    .sidebar-header h2 {
+      color: #ff0050;
+      margin-bottom: 10px;
+    }
+    .search-box {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 20px;
+      background: #333;
+      color: white;
+      outline: none;
+    }
+    .search-box::placeholder {
+      color: #ccc;
+    }
+    .users-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 0;
+    }
+    .user-item {
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      cursor: pointer;
+      border-bottom: 1px solid #2a2a2a;
+      transition: background 0.2s;
+    }
+    .user-item:hover, .user-item.active {
+      background: #2a2a2a;
+    }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 15px;
+    }
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .user-name {
+      font-weight: 600;
+      font-size: 1rem;
+      color: white;
+      flex: 1;
+    }
+    .last-message {
+      font-size: 0.85rem;
+      opacity: 0.7;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 110px;
+      margin-left: 10px;
+      color: #ccc;
+    }
+    .last-message-time {
+      font-size: 0.75rem;
+      opacity: 0.5;
+      margin-left: 10px;
+    }
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-header {
+      padding: 20px;
+      background: #222;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+    }
+    .chat-header .user-avatar {
+      width: 50px;
+      height: 50px;
+      margin-right: 15px;
+    }
+    .chat-header .user-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #ff0050;
+      flex: 1;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: #101010;
+      display: flex;
+      flex-direction: column;
+    }
+    .message {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      max-width: 70%;
+    }
+    .message.sent {
+      align-self: flex-end;
+      text-align: right;
+    }
+    .message .text {
+      padding: 10px 15px;
+      border-radius: 15px;
+      background: #222;
+      color: white;
+      font-size: 0.95rem;
+    }
+    .message.sent .text {
+      background: #ff0050;
+      color: white;
+    }
+    .message .time {
+      font-size: 0.75rem;
+      opacity: 0.6;
+      margin-top: 2px;
+    }
+    .chat-input {
+      padding: 15px 20px;
+      border-top: 1px solid #333;
+      background: #222;
+      display: flex;
+      align-items: center;
+    }
+    .chat-input textarea {
+      flex: 1;
+      resize: none;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 15px;
+      font-size: 1rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      outline: none;
+      background: #333;
+      color: white;
+      height: 40px;
+    }
+    .send-btn {
+      background: #ff0050;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      margin-left: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .send-btn:hover {
+      background: #e50045;
+    }
+    .send-btn svg {
+      fill: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h2>ReelIndia Chat</h2>
+        <input
+          type="text"
+          placeholder="Search users..."
+          class="search-box"
+          id="userSearch"
+          oninput="searchUsers()"
+        />
+      </div>
+      <div class="users-list" id="usersList">
+        <!-- Dynamic chat users will be inserted here -->
+      </div>
+    </div>
+    <div class="chat-area">
+      <div class="chat-header" id="chatHeader">
+        <div class="user-avatar">
+          <img src="" alt="User Avatar" id="chatUserAvatar" />
+        </div>
+        <div class="user-name" id="chatUserName">Select a user</div>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <!-- Chat messages go here -->
+      </div>
+      <div class="chat-input">
+        <textarea
+          id="messageInput"
+          placeholder="Type a message..."
+          onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendMessage();}"
+          disabled
+        ></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Replace with your actual auth token from login
+    const AUTH_TOKEN = localStorage.getItem('token') || '';
+
+    if (!AUTH_TOKEN) {
+      alert('Please login first!');
+      // Optionally redirect to login page
+      window.location.href = '/public/pages/login.html';
+    }
+
+    let selectedUserEmail = null;
+    let users = [];
+    const usersListEl = document.getElementById('usersList');
+    const chatHeaderAvatarEl = document.getElementById('chatUserAvatar');
+    const chatHeaderNameEl = document.getElementById('chatUserName');
+    const chatMessagesEl = document.getElementById('chatMessages');
+    const messageInputEl = document.getElementById('messageInput');
+    const sendBtnEl = document.getElementById('sendBtn');
+    const userSearchEl = document.getElementById('userSearch');
+
+    // Helper: Format time to HH:MM
+    function formatTime(dateStr) {
+      const d = new Date(dateStr);
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Fetch chat users (followers and following with last message)
+    async function fetchChatUsers() {
+      try {
+        const res = await fetch('/api/chat-users', {
+          headers: { Authorization: 'Bearer ' + AUTH_TOKEN }
+        });
+        const data = await res.json();
+        if (data.success) {
+          users = data.users;
+          renderUsers(users);
+        } else {
+          console.error('Failed to fetch chat users:', data.message);
+        }
+      } catch (err) {
+        console.error('Error fetching chat users:', err);
+      }
+    }
+
+    // Render user list in sidebar
+    function renderUsers(list) {
+      usersListEl.innerHTML = '';
+      if (!list.length) {
+        usersListEl.innerHTML = '<p style="color:#777; padding:20px;">No users found</p>';
+        return;
+      }
+      list.forEach(user => {
+        const userEl = document.createElement('div');
+        userEl.classList.add('user-item');
+        if (user.email === selectedUserEmail) userEl.classList.add('active');
+        userEl.innerHTML = `
+          <div class="user-avatar"><img src="${user.profilePic || '/default.png'}" alt="${user.name}" /></div>
+          <div class="user-name">${user.name}</div>
+          <div class="last-message">${user.lastMessage || ''}</div>
+          <div class="last-message-time">${user.lastMessageTime || ''}</div>
+        `;
+        userEl.onclick = () => selectUser(user.email);
+        usersListEl.appendChild(userEl);
+      });
+    }
+
+    // Select user to chat with
+    async function selectUser(email) {
+      if (email === selectedUserEmail) return;
+      selectedUserEmail = email;
+      const user = users.find(u => u.email === email);
+      chatHeaderAvatarEl.src = user.profilePic || '/default.png';
+      chatHeaderNameEl.textContent = user.name;
+      messageInputEl.disabled = false;
+      sendBtnEl.disabled = false;
+      userSearchEl.disabled = false;
+      chatMessagesEl.innerHTML = '';
+      await fetchMessages();
+      scrollToBottom();
+      renderUsers(users);
+    }
+
+    // Fetch messages between logged-in user and selected user
+    async function fetchMessages() {
+      if (!selectedUserEmail) return;
+      try {
+        const res = await fetch(`/api/messages/${encodeURIComponent(selectedUserEmail)}`, {
+          headers: { Authorization: 'Bearer ' + AUTH_TOKEN }
+        });
+        const data = await res.json();
+        if (data.success) {
+          renderMessages(data.messages);
+        } else {
+          console.error('Failed to fetch messages:', data.message);
+        }
+      } catch (err) {
+        console.error('Error fetching messages:', err);
+      }
+    }
+
+    // Render messages in chat area
+    function renderMessages(messages) {
+      chatMessagesEl.innerHTML = '';
+      messages.forEach(msg => {
+        const messageEl = document.createElement('div');
+        messageEl.classList.add('message');
+        if (msg.sender === getLoggedInUserEmail()) {
+          messageEl.classList.add('sent');
+        }
+        messageEl.innerHTML = `
+          <div class="text">${escapeHtml(msg.content)}</div>
+          <div class="time">${formatTime(msg.timestamp)}</div>
+        `;
+        chatMessagesEl.appendChild(messageEl);
+      });
+      scrollToBottom();
+    }
+
+    // Send message to selected user
+    async function sendMessage() {
+      const message = messageInputEl.value.trim();
+      if (!message || !selectedUserEmail) return;
+      messageInputEl.value = '';
+      try {
+        const res = await fetch('/api/send-message', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + AUTH_TOKEN,
+          },
+          body: JSON.stringify({ to: selectedUserEmail, content: message }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          await fetchMessages();
+          await fetchChatUsers();
+        } else {
+          alert('Failed to send message: ' + data.message);
+        }
+      } catch (err) {
+        console.error('Error sending message:', err);
+      }
+    }
+
+    // Escape text to prevent HTML injection
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Get logged-in user email from token (assuming payload in JWT includes email)
+    function getLoggedInUserEmail() {
+      try {
+        const payload = JSON.parse(atob(AUTH_TOKEN.split('.')[1]));
+        return payload.email;
+      } catch {
+        return null;
+      }
+    }
+
+    // Scroll chat messages to bottom
+    function scrollToBottom() {
+      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+    }
+
+    // Search users by name (filters the displayed users)
+    function searchUsers() {
+      const q = userSearchEl.value.toLowerCase();
+      const filtered = users.filter(u => u.name.toLowerCase().includes(q));
+      renderUsers(filtered);
+    }
+
+    // Initial periodic updates
+    async function periodicUpdate() {
+      await fetchChatUsers();
+      if (selectedUserEmail) await fetchMessages();
+    }
+
+    // Initial load
+    fetchChatUsers();
+
+    // Poll every 5 seconds for updates
+    setInterval(periodicUpdate, 5000);
+  </script>
+</body>
+</html>
