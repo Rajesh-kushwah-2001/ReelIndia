@@ -1,21 +1,17 @@
 {
-  "name": "reelindia",
-  "version": "2.0.0",
-  "description": "ReelIndia — reels, share, chat, upload, profiles, notifications",
-  "main": "server.js",
+  "name": "youplay",
+  "version": "1.0.1",
+  "private": true,
+  "description": "YouPlay - real-time social media app with feed + reels",
   "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "bcrypt": "^6.0.0",
-    "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.18.0",
-    "multer": "^1.4.5-lts.1",
-    "nodemailer": "^7.0.6",
-    "qrcode": "^1.5.4",
-    "socket.io": "^4.7.5",
-    "speakeasy": "^2.0.0",
-    "uuid": "^9.0.1"
+    "backend:install": "npm --prefix backend install",
+    "frontend:install": "npm --prefix frontend install",
+    "install:all": "npm run backend:install && npm run frontend:install",
+    "backend:dev": "npm --prefix backend run dev",
+    "frontend:dev": "npm --prefix frontend run dev",
+    "dev": "sh -c 'npm run backend:dev & npm run frontend:dev'",
+    "backend:start": "npm --prefix backend run start",
+    "frontend:build": "npm --prefix frontend run build",
+    "start": "npm run backend:start"
   }
 }
